@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://example.com/2022/10/02/fx-md/</loc>
+    <loc>http://karlvenk.github.io/2022/10/02/fx-md/</loc>
     
     <lastmod>2022-10-05</lastmod>
     
@@ -11,7 +11,7 @@
   </url>
   
   <url>
-    <loc>http://example.com/2022/10/01/first-md/</loc>
+    <loc>http://karlvenk.github.io/2022/10/01/first-md/</loc>
     
     <lastmod>2022-10-05</lastmod>
     
@@ -20,7 +20,7 @@
   </url>
   
   <url>
-    <loc>http://example.com/categories/index.html</loc>
+    <loc>http://karlvenk.github.io/tags/index.html</loc>
     
     <lastmod>2022-10-04</lastmod>
     
@@ -29,7 +29,7 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/index.html</loc>
+    <loc>http://karlvenk.github.io/about/index.html</loc>
     
     <lastmod>2022-10-04</lastmod>
     
@@ -38,7 +38,7 @@
   </url>
   
   <url>
-    <loc>http://example.com/about/index.html</loc>
+    <loc>http://karlvenk.github.io/categories/index.html</loc>
     
     <lastmod>2022-10-04</lastmod>
     
@@ -48,7 +48,7 @@
   
 
   <url>
-    <loc>http://example.com/</loc>
+    <loc>http://karlvenk.github.io/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -56,14 +56,14 @@
 
   
   <url>
-    <loc>http://example.com/tags/golang/</loc>
+    <loc>http://karlvenk.github.io/tags/golang/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://example.com/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</loc>
+    <loc>http://karlvenk.github.io/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -72,7 +72,7 @@
 
   
   <url>
-    <loc>http://example.com/categories/framework/</loc>
+    <loc>http://karlvenk.github.io/categories/framework/</loc>
     <lastmod>2022-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
