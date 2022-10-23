@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://karlvenk.github.io/2022/10/23/blog1-md/</loc>
+    
+    <lastmod>2022-10-23</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://karlvenk.github.io/2022/10/02/fx-md/</loc>
     
     <lastmod>2022-10-05</lastmod>
@@ -49,7 +58,7 @@
 
   <url>
     <loc>http://karlvenk.github.io/</loc>
-    <lastmod>2022-10-05</lastmod>
+    <lastmod>2022-10-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -57,14 +66,21 @@
   
   <url>
     <loc>http://karlvenk.github.io/tags/golang/</loc>
-    <lastmod>2022-10-05</lastmod>
+    <lastmod>2022-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://karlvenk.github.io/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</loc>
-    <lastmod>2022-10-05</lastmod>
+    <lastmod>2022-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://karlvenk.github.io/tags/CNCS/</loc>
+    <lastmod>2022-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -73,7 +89,14 @@
   
   <url>
     <loc>http://karlvenk.github.io/categories/framework/</loc>
-    <lastmod>2022-10-05</lastmod>
+    <lastmod>2022-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://karlvenk.github.io/categories/%E9%9A%8F%E7%AC%94/</loc>
+    <lastmod>2022-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
