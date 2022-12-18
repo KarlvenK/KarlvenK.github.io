@@ -127,18 +127,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -167,6 +167,115 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://karlvenk.github.io/2022/12/18/6-824-lab1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Karlven">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Karlven">
+      <meta itemprop="description" content="Karlven's blog">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Karlven">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/12/18/6-824-lab1/" class="post-title-link" itemprop="url">6.824_lab1</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-12-18 12:25:25 / Modified: 21:13:17" itemprop="dateCreated datePublished" datetime="2022-12-18T12:25:25+08:00">2022-12-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">课程笔记</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="6-824-Lab1-MapReduce"><a href="#6-824-Lab1-MapReduce" class="headerlink" title="6.824 Lab1: MapReduce"></a>6.824 Lab1: MapReduce</h1><h2 id="什么是MapReduce"><a href="#什么是MapReduce" class="headerlink" title="什么是MapReduce"></a>什么是MapReduce</h2><p>MapReduce 是由 Google的 Jeff Dean 和 Sanjay在 <a target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf">MapReduce 论文</a>中提出一个软件架构，它是用于处理大量数据在分布式集群上并行处理的实现。</p>
+<p><img src="/../images/6.824_lab1/mapReduce.png"></p>
+<h3 id="Map-Reduce"><a href="#Map-Reduce" class="headerlink" title="Map Reduce"></a>Map Reduce</h3><p>Map 函数的作用是将输入的文件经过处理后，生成key-value pairs，以 golang 举例子，就是下面的 Output。Output 的数据会存入到中间文件(intermediate files)中。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> KVPair <span class="keyword">struct</span> &#123;</span><br><span class="line">    Key <span class="type">string</span></span><br><span class="line">    Value <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Output []KVPair</span><br></pre></td></tr></table></figure>
+<p>Reduce 函数的作用，是根据从中间文件获得的 KVPair 来计算得到最后的结果。</p>
+<p>以上图举例，Map 处理的过程如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;split0&#125; ---- Map -----&gt; [&#123;a, 1&#125;, &#123;b, 1&#125;, &#123;c, 1&#125;]</span><br><span class="line">&#123;split1&#125; ---- Map -----&gt; [&#123;b, 1&#125;, &#123;d, 1&#125;]</span><br><span class="line">...</span><br><span class="line">&#123;splitN&#125; ---- Map -----&gt; [&#123;a, 1&#125;, &#123;a, 1&#125;, &#123;c, 1&#125;, &#123;c, 1&#125;]</span><br></pre></td></tr></table></figure>
+<p> Ruduce 的过程如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[&#123;a, 1&#125;, &#123;a, 1&#125;, &#123;a, 1&#125;] ---- Reduce ----&gt; 3</span><br><span class="line">[&#123;b, 1&#125;, &#123;b, 1&#125;] ---- Reduce ----&gt; 2</span><br><span class="line">[&#123;c, 1&#125;, &#123;c, 1&#125;, &#123;c, 1&#125;] ---- Reduce ----&gt; 3</span><br><span class="line">[&#123;d, 1&#125;] --- Reduce ----&gt;  1</span><br></pre></td></tr></table></figure>
+
+<p>Map 函数的入参为 一个 key 和一个 value，其中 key 一般为文件名，可以忽略，没用太大作用，value 则是文件的内容。<br>Reduce 函数的入参是 一个 key 和 key对应的一系列 value。</p>
+<h3 id="Master-amp-Worker"><a href="#Master-amp-Worker" class="headerlink" title="Master &amp; Worker"></a>Master &amp; Worker</h3><p>Master 负责分配任务，Worker每次从 Master 获取任务，执行完成后汇报给 Master 完成情况。当 Map 任务都完成后，Master 再分配 Reduce 任务。</p>
+<h2 id="Lab1"><a href="#Lab1" class="headerlink" title="Lab1"></a>Lab1</h2><h3 id="关于调试代码"><a href="#关于调试代码" class="headerlink" title="关于调试代码"></a>关于调试代码</h3><p>我的环境是 ARM 的 MacOS，golang 版本是 1.19.4</p>
+<p>代码结构（简化）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── Makefile</span><br><span class="line">└── src</span><br><span class="line">    ├── go.mod</span><br><span class="line">    ├── go.sum</span><br><span class="line">    ├── kvraft</span><br><span class="line">    │   └──*.go</span><br><span class="line">    ├── labgob</span><br><span class="line">    │   ├── labgob.go</span><br><span class="line">    │   └── test_test.go</span><br><span class="line">    ├── labrpc</span><br><span class="line">    │   └── *.go</span><br><span class="line">    ├── main</span><br><span class="line">    │   ├── build.sh</span><br><span class="line">    │   ├── *.go</span><br><span class="line">    │   ├── *.txt</span><br><span class="line">    │   ├── test-mr-many.sh</span><br><span class="line">    │   └── test_mr.sh</span><br><span class="line">    ├── models</span><br><span class="line">    │   └── kv.go</span><br><span class="line">    ├── mr</span><br><span class="line">    │   └── *.go</span><br><span class="line">    ├── mrapps</span><br><span class="line">    │   ├── *.go</span><br><span class="line">    │   └── *.so</span><br><span class="line">    ├── porcupine</span><br><span class="line">    │   └── *.go</span><br><span class="line">    ├── raft</span><br><span class="line">    │   └── *.go</span><br><span class="line">    ├── shardctrler</span><br><span class="line">    │   └── *.go</span><br><span class="line">    └── shardkv</span><br><span class="line">        └── *.go</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>测试脚本（节选） <code>./src/main/test_mr.sh</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">RACE=-race  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">if</span> \[\[ <span class="string">&quot;<span class="variable">$OSTYPE</span>&quot;</span> = <span class="string">&quot;darwin&quot;</span>\* \]\]  </span><br><span class="line"><span class="keyword">then</span>  </span><br><span class="line"> <span class="keyword">if</span> go version | grep <span class="string">&#x27;go1.17.\[012345\]&#x27;</span>  </span><br><span class="line">   <span class="keyword">then</span>  </span><br><span class="line">   \<span class="comment"># -race with plug-ins on x86 MacOS 12 with  </span></span><br><span class="line"> <span class="comment"># go1.17 before 1.17.6 sometimes crash.   RACE=  </span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;\*\*\* Turning off -race since it may not work on a Mac&#x27;</span>  </span><br><span class="line">   <span class="built_in">echo</span> <span class="string">&#x27;    with &#x27;</span> `go version`  </span><br><span class="line">   <span class="keyword">fi</span>  </span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="comment"># run the test in a fresh sub-directory.  </span></span><br><span class="line"><span class="built_in">rm</span> -rf mr-tmp  </span><br><span class="line"><span class="built_in">mkdir</span> mr-tmp || <span class="built_in">exit</span> 1  </span><br><span class="line"><span class="built_in">cd</span> mr-tmp || <span class="built_in">exit</span> 1  </span><br><span class="line"><span class="built_in">rm</span> -f mr-*  </span><br><span class="line">  </span><br><span class="line"><span class="comment"># make sure software is freshly built.  </span></span><br><span class="line">(<span class="built_in">cd</span> ../../mrapps &amp;&amp; go clean)  </span><br><span class="line">(<span class="built_in">cd</span> .. &amp;&amp; go clean)  </span><br><span class="line">(<span class="built_in">cd</span> ../../mrapps &amp;&amp; go build <span class="variable">$RACE</span> -buildmode=plugin wc.go) || <span class="built_in">exit</span> 1  </span><br><span class="line">(<span class="built_in">cd</span> ../../mrapps &amp;&amp; go build <span class="variable">$RACE</span> -buildmode=plugin indexer.go) || <span class="built_in">exit</span> 1  </span><br><span class="line">(<span class="built_in">cd</span> ../../mrapps &amp;&amp; go build <span class="variable">$RACE</span> -buildmode=plugin mtiming.go) || <span class="built_in">exit</span> 1  </span><br><span class="line">(<span class="built_in">cd</span> ../../mrapps &amp;&amp; go build <span class="variable">$RACE</span> -buildmode=plugin rtiming.go) || <span class="built_in">exit</span> 1  </span><br><span class="line">(<span class="built_in">cd</span> ../../mrapps &amp;&amp; go build <span class="variable">$RACE</span> -buildmode=plugin jobcount.go) || <span class="built_in">exit</span> 1  </span><br><span class="line">(<span class="built_in">cd</span> ../../mrapps &amp;&amp; go build <span class="variable">$RACE</span> -buildmode=plugin early_exit.go) || <span class="built_in">exit</span> 1  </span><br><span class="line">(<span class="built_in">cd</span> ../../mrapps &amp;&amp; go build <span class="variable">$RACE</span> -buildmode=plugin crash.go) || <span class="built_in">exit</span> 1  </span><br><span class="line">(<span class="built_in">cd</span> ../../mrapps &amp;&amp; go build <span class="variable">$RACE</span> -buildmode=plugin nocrash.go) || <span class="built_in">exit</span> 1  </span><br><span class="line">(<span class="built_in">cd</span> .. &amp;&amp; go build <span class="variable">$RACE</span> mrcoordinator.go) || <span class="built_in">exit</span> 1  </span><br><span class="line">(<span class="built_in">cd</span> .. &amp;&amp; go build <span class="variable">$RACE</span> mrworker.go) || <span class="built_in">exit</span> 1  </span><br><span class="line">(<span class="built_in">cd</span> .. &amp;&amp; go build <span class="variable">$RACE</span> mrsequential.go) || <span class="built_in">exit</span> 1</span><br></pre></td></tr></table></figure>
+<p>我们可以看到，执行目录是在 <code>./src/main/mr-tmp</code><br>lab1使用了 go 的 plugin 功能，先将不同的 map reduce 「函数对」编译成 <code>xxxx.so</code>插件，之后的MapReduce 框架的可执行文件只需要在运行时传入指定的 so 文件路径，就可以加载其中的 map 和 reduce 函数，以达到一次编译多个功能。只要 so 文件中的 map 和 reduce 的函数签名对应即可。</p>
+<p>在使用 goland 调试用了 plugin 功能的代码时，我发现 goland 会报错。在查阅资料后，得知，在 build 时需要开启<code>-gcflags &quot;all=-N -l&quot;</code>选项，并且不能开启 <code>-race</code> 选项，否则会出现报错。<br>那么，在编译 so 插件时，我们应当用如下的命令。<br><code>(cd ../../mrapps &amp;&amp; go build  -gcflags &quot;all=-N -l&quot; -buildmode=plugin wc.go)</code><br>编译可执行文件时，也要用相同的 build 选项。<br><code>(cd .. &amp;&amp; go build -gcflags &quot;all=-N -l&quot; mrworker.go)</code></p>
+<p>如果调试的程序并没有用 plugin 功能，那么不需要在意这些 build 选项，使用脚本里的就行。</p>
+<h3 id="Master-设计"><a href="#Master-设计" class="headerlink" title="Master 设计"></a>Master 设计</h3><p>Master 负责分发任务，当有 Worker 向 Master 请求分配任务时，对请求作出响应。Master 在启动时入参为 M 个输入文件，Reduce 数量 R。</p>
+<p>任务的种类分为 Map 和 Reduce 两种。我们让 Master 有两个状态：Map 状态，Reduce 状态。不同的状态分配不同的任务。<br>Reduce 任务需要在 Map 任务都执行完之后进行。<br>总共有 M 个 Map 任务和 R 个 Reduce 任务。</p>
+<p>每次 Worker 得到 Master 分配任务后，Master 将该任务标记为 running。Worker 执行完任务后，通知 Master，Master 此时再将该任务状态标记为 finished。</p>
+<p>那么我们可以开启一个 goroutine 负责分配任务，它每间隔一段时间，检查当前 Master 状态下，各个任务的状态。当所有任务都完成时，切换 Master 状态，进入 Reduce 状态或者结束进程。</p>
+<h3 id="Worker-设计"><a href="#Worker-设计" class="headerlink" title="Worker 设计"></a>Worker 设计</h3><p>根据 Hint <code>* A reasonable naming convention for intermediate files is mr-X-Y, where X is the Map task number, and Y is the reduce task number.</code><br>在执行 Map 任务时，Worker 要将 KVPair 存入中间文件，对 KVPair 的 Key 进行 hash 操作后对 R 取模，得到 Y，再根据分配的 Map 任务编号 X，存入到 mr-X-Y 文件中。<br>在执行 Reduce 任务时，Worker 根据分配的任务序号Y，读取所有的 Y 中间文件，经过 reduce 处理后，根据 Rules <code>* The worker implementation should put the output of the X&#39;th reduce task in the file mr-out-X.</code>，Y 号 Reduce 任务的结果文件为 <code>mr-out-Y</code>。</p>
+<p>Worker 的工作很简单，每次从通过 RPC 请求从 Master 获取任务，根据任务的种类执行对应的函数，完成后继续获取新的任务。</p>
+<h3 id="容错处理"><a href="#容错处理" class="headerlink" title="容错处理"></a>容错处理</h3><p>在现实中，当集群中的节点够多时，肯定会出现某一节点在某一时刻出错的情况，它可能会在一段时间内无法通信。<br>如果没有容错处理，Master 会因为等待出错 Worker 反馈其被分配的任务的执行状态而无法进入下一状态。<br>分配任务时，记录下该任务分配的时刻。每次分配任务的 goroutine 执行时，遍历每个任务的状态，对于处于 running 状态的任务，根据记录的分配时刻，检查其是否超时，若超时，将重置该任务的状态为初始状态，后续 Worker 请求分配任务时，会被重新分配。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="http://nil.csail.mit.edu/6.824/2022/labs/lab-mr.html">http://nil.csail.mit.edu/6.824/2022/labs/lab-mr.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf">https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
