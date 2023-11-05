@@ -1,246 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-<meta name="google-site-verification" content="c3kLoN8kf6yPkXgnDZf54mA62tPFFZFfN26OcR97Ksg" />
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+  <head>
+    
 
+    
+<script>!function(){var e=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,t=localStorage.getItem("use-color-scheme")||"auto";("dark"===t||e&&"light"!==t)&&document.documentElement.classList.toggle("dark",!0)}()</script>
+    
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+<meta charset="utf-8" >
 
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"karlvenk.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-
-    <meta name="description" content="uber fxfx 是 uber 开源的一款依赖注入框架，依赖注入这个名词对我来说一直是个很奇怪的存在（不了解 Java ），小项目引入依赖注入完全没必要啊，凭空提高复杂度（逃fx 的作用是解决了golang项目中坐落各个包的全局变量，以及数不清的 init 函数。 这里也作为我学习的记录，分享一下我对 fx 的理解，包括一些源码的分析。 函数签名这里列出主要会用到的函数与方法，并对其作用作出简要">
-<meta property="og:type" content="article">
+<title>fx: golang依赖注入框架</title>
+<meta name="keywords" content="fx: golang依赖注入框架, Karlven">
+<meta name="description" content="uber fxfx 是 uber 开源的一款依赖注入框架，依赖注入这个名词对我来说一直是个很奇怪的存在（不了解 Java ），小项目引入依赖注入完全没必要啊，凭空提高复杂度（逃fx 的作用是解决了golang项目中坐落各个包的全局变量，以及">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta property="og:title" content="fx: golang依赖注入框架">
-<meta property="og:url" content="http://karlvenk.github.io/2022/10/02/fx-md/index.html">
-<meta property="og:site_name" content="Karlven">
-<meta property="og:description" content="uber fxfx 是 uber 开源的一款依赖注入框架，依赖注入这个名词对我来说一直是个很奇怪的存在（不了解 Java ），小项目引入依赖注入完全没必要啊，凭空提高复杂度（逃fx 的作用是解决了golang项目中坐落各个包的全局变量，以及数不清的 init 函数。 这里也作为我学习的记录，分享一下我对 fx 的理解，包括一些源码的分析。 函数签名这里列出主要会用到的函数与方法，并对其作用作出简要">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-10-02T09:02:04.000Z">
-<meta property="article:modified_time" content="2022-10-05T14:31:34.608Z">
-<meta property="article:author" content="Karlven">
-<meta property="article:tag" content="golang">
-<meta property="article:tag" content="依赖注入">
-<meta name="twitter:card" content="summary">
+<meta property="og:description" content="uber fxfx 是 uber 开源的一款依赖注入框架，依赖注入这个名词对我来说一直是个很奇怪的存在（不了解 Java ），小项目引入依赖注入完全没必要啊，凭空提高复杂度（逃fx 的作用是解决了golang项目中坐落各个包的全局变量，以及">
 
+<link rel="shortcut icon" href="/images/fav.ico">
+<link rel="stylesheet" href="/style/main.css">
 
-<link rel="canonical" href="http://karlvenk.github.io/2022/10/02/fx-md/">
+  <meta name="generator" content="Hexo 6.3.0"></head>
+  <body>
+    <div id="app" class="main">
 
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://karlvenk.github.io/2022/10/02/fx-md/","path":"2022/10/02/fx-md/","title":"fx: golang依赖注入框架"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>fx: golang依赖注入框架 | Karlven</title>
-  
-
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
+<div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="http://karlvenk.github.io">
+        <img class="avatar" src="/images/avatar.png" alt="logo" width="32px" height="32px">
+      </a>
+      <a href="http://karlvenk.github.io">
+        <h1 class="site-title">Karlven</h1>
+      </a>
     </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Karlven</p>
-      <i class="logo-line"></i>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="right">
+        <i class="icon menu-switch icon-menu-outline" ></i>
     </div>
   </div>
 </div>
 
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-  </ul>
+<div class="menu-container" style="height: 0;opacity: 0;">
+<nav class="menu-list">
+  
+    
+      <a href="/" class="menu purple-link">
+        首页
+      </a>
+    
+  
+    
+      <a href="/tags" class="menu purple-link">
+        标签
+      </a>
+    
+  
+    
+      <a href="/categories" class="menu purple-link">
+        分类
+      </a>
+    
+  
+    
+      <a href="/archives" class="menu purple-link">
+        归档
+      </a>
+    
+  
+    
+      <a href="/about" class="menu purple-link">
+        关于
+      </a>
+    
+  
 </nav>
-
-
-
-
 </div>
+
+
+
+  <div class="content-container">
+    <div class="post-detail">
+      
+      <h2 class="post-title">fx: golang依赖注入框架</h2>
+      <div class="post-info post-detail-info">
+        <span><i class="icon icon-calendar-outline"></i> 2022-10-02</span>
         
-  
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#uber-fx"><span class="nav-number">1.</span> <span class="nav-text">uber fx</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E7%AD%BE%E5%90%8D"><span class="nav-number">1.1.</span> <span class="nav-text">函数签名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Provide%E3%80%81Populate%E3%80%81Invoke%E3%80%81Supply"><span class="nav-number">1.2.1.</span> <span class="nav-text">Provide、Populate、Invoke、Supply</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%81"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">！</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run%E3%80%81Start%E3%80%81Lifecycle"><span class="nav-number">1.2.2.</span> <span class="nav-text">Run、Start、Lifecycle</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#demo-%E5%AE%9E%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">demo 实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">3.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Karlven</p>
-  <div class="site-description" itemprop="description">Karlven's blog</div>
-</div>
-<div class="site-state-wrap site-overview-item animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">6</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
+          <span>
+          <i class="icon icon-pricetags-outline"></i>
+            
+              <a href="/tags/golang/">
+              golang
+                
+                  ，
+                
+              </a>
+            
+              <a href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/">
+              依赖注入
+                
+              </a>
+            
+          </span>
+        
       </div>
-      <div class="site-state-item site-state-categories">
-          <a href="/categories/">
-        <span class="site-state-item-count">3</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-          <a href="/tags/">
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-
-
-
-        </div>
-      </div>
-    </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
-
-    
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://karlvenk.github.io/2022/10/02/fx-md/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Karlven">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Karlven">
-      <meta itemprop="description" content="Karlven's blog">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="fx: golang依赖注入框架 | Karlven">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          fx: golang依赖注入框架
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-10-02 17:02:04" itemprop="dateCreated datePublished" datetime="2022-10-02T17:02:04+08:00">2022-10-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-10-05 22:31:34" itemprop="dateModified" datetime="2022-10-05T22:31:34+08:00">2022-10-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/framework/" itemprop="url" rel="index"><span itemprop="name">framework</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-        <h1 id="uber-fx"><a href="#uber-fx" class="headerlink" title="uber fx"></a>uber fx</h1><p>fx 是 uber 开源的一款依赖注入框架，依赖注入这个名词对我来说一直是个很奇怪的存在（不了解 Java ），小项目引入依赖注入完全没必要啊，凭空提高复杂度（逃<br>fx 的作用是解决了golang项目中坐落各个包的全局变量，以及数不清的 <code>init</code> 函数。</p>
+      <div class="post-content-wrapper">
+        <div class="post-content">
+          <h1 id="uber-fx"><a href="#uber-fx" class="headerlink" title="uber fx"></a>uber fx</h1><p>fx 是 uber 开源的一款依赖注入框架，依赖注入这个名词对我来说一直是个很奇怪的存在（不了解 Java ），小项目引入依赖注入完全没必要啊，凭空提高复杂度（逃<br>fx 的作用是解决了golang项目中坐落各个包的全局变量，以及数不清的 <code>init</code> 函数。</p>
 <p>这里也作为我学习的记录，分享一下我对 fx 的理解，包括一些源码的分析。</p>
 <h2 id="函数签名"><a href="#函数签名" class="headerlink" title="函数签名"></a>函数签名</h2><p>这里列出主要会用到的函数与方法，并对其作用作出简要解释。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(opts ...Option)</span></span> *App</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Provide</span><span class="params">(constructors ...<span class="keyword">interface</span>&#123;&#125;)</span></span> Option </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Supply</span><span class="params">(values ...<span class="keyword">interface</span>&#123;&#125;)</span></span> Option</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Populate</span><span class="params">(targets ...<span class="keyword">interface</span>&#123;&#125;)</span></span> Option</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Invoke</span><span class="params">(funcs ...<span class="keyword">interface</span>&#123;&#125;)</span></span> Option</span><br></pre></td></tr></table></figure>
@@ -311,77 +177,78 @@
 <li><a target="_blank" rel="noopener" href="https://pkg.go.dev/go.uber.org/fx@v1.18.2">https://pkg.go.dev/go.uber.org/fx@v1.18.2</a></li>
 </ol>
 
+        </div>
+          
+        <div class="top-div">
+          <ol class="top-box"><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#uber-fx"><span class="top-box-text">uber fx</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%87%BD%E6%95%B0%E7%AD%BE%E5%90%8D"><span class="top-box-text">函数签名</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E4%BD%BF%E7%94%A8"><span class="top-box-text">使用</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-3"><a class="top-box-link" href="#Provide%E3%80%81Populate%E3%80%81Invoke%E3%80%81Supply"><span class="top-box-text">Provide、Populate、Invoke、Supply</span></a></li><li class="top-box-item top-box-level-3"><a class="top-box-link" href="#Run%E3%80%81Start%E3%80%81Lifecycle"><span class="top-box-text">Run、Start、Lifecycle</span></a></li></ol></li></ol></li><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#demo-%E5%AE%9E%E4%BE%8B"><span class="top-box-text">demo 实例</span></a></li><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="top-box-text">参考文献</span></a></li></ol>
+        </div>
+          
+      </div>
     </div>
 
     
+      <div class="next-post">
+        <a class="purple-link" href="/2022/10/01/first-md/">
+          <h3 class="post-title">
+            下一篇：Init()
+          </h3>
+        </a>
+      </div>
     
-    
-
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/golang/" rel="tag"># golang</a>
-              <a href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" rel="tag"># 依赖注入</a>
-          </div>
-
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2022/10/01/first-md/" rel="prev" title="Init()">
-                  <i class="fa fa-chevron-left"></i> Init()
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2022/10/23/blog1-md/" rel="next" title="CNCS">
-                  CNCS <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
-</div>
-
-
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2023</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Karlven</span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
 
+
+
+
+
+
+
+
+
+
+<footer>
+<div class="site-footer">
+  <div class="social-container">
+    
+      
+        <a aria-label="跳转至github" href="https://github.com/KarlvenK" target="_blank">
+          <i class="icon icon-github"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> <a href="https://github.com/f-dong/hexo-theme-minimalism" target="_blank">Theme</a>
+  
+  
+  
+  
+  
+  
+</div>
+</footer>
+
+
+      </div>
     </div>
-  </footer>
+    
+<script id="hexo-configurations"> window.theme_config = {"image":{"lazyload_enable":true,"photo_zoom":"simple-lightbox"}}; window.is_post = true; </script>
 
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
-
-  
+<script src="/js/main.js"></script>
 
 
 
 
 
-  
 
-
-
-
-
-</body>
+  </body>
 </html>
+
